@@ -17,12 +17,14 @@ struct List::Node
 };
 
 List::List()
-    : head{ new Node{} }, tail{}, sz{}
+    : head{ new Node{} }, tail{}, sz{} 
 {
     head->next = std::make_unique<Node>(0, head.get(), nullptr);
     tail = head->next.get();
 }
 List::~List() {}
+
+
 
 List::List(List const & other)
     : List{}
@@ -119,6 +121,9 @@ void List::swap(List & other) noexcept
     swap(sz, other.sz);
 }
 
+
+
+
 List & List::operator=(List const & rhs) &
 {
     List{rhs}.swap(*this);
@@ -130,3 +135,61 @@ List & List::operator=(List && rhs)& noexcept
     swap(rhs);
     return *this;
 }
+
+List::List_Iterator::List_Iterator(Node* curr):
+    current{curr}
+{
+    
+}
+
+List::List_Iterator List::begin()
+{
+    return List_Iterator{head->next.get()};
+}
+List::List_Iterator List::end()
+{
+	  return List_Iterator{tail};
+}
+
+List::List_Iterator List::List_Iterator::operator++(int)
+{
+    current = current->next.get();
+    return *this;
+	
+}
+
+List::List_Iterator& List::List_Iterator::operator++()
+{
+    List_Iterator tmp = *this;
+    current = current->next.get();
+    return tmp;
+}
+
+List::List_Iterator List::List_Iterator::operator--(int)
+{
+    current = current->prev;
+    return *this;
+}
+
+List::List_Iterator& List::List_Iterator::operator--()
+{
+    List_Iterator tmp = *this;
+    current = current->prev;
+    return tmp;
+}
+
+List::List_Iterator::reference List::List_Iterator::operator*() const
+{
+    return current->value;
+}
+
+bool List::List_Iterator::operator==(List_Iterator& other)const
+{
+    return current == other.current;
+}
+
+bool List::List_Iterator::operator!=(List_Iterator other) const
+{
+    return !(*this == other);
+}
+
